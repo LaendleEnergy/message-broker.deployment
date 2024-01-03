@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  message_broker:
+    container_name: redis
+    image: ghcr.io/laendleenergy/redis:latest
+  ports:
+    - 6379:6379

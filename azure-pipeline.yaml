@@ -1,0 +1,35 @@
+trigger: none
+
+variables:
+  remoteProjectPath: /home/felix/projects/message_broker
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: SSH@0
+  displayName: docker compose down
+  continueOnError: true
+  inputs:
+    sshEndpoint: '85.215.60.151_ssh'
+    runOptions: 'commands'
+    commands: 'docker compose -f ${{ variables.remoteProjectPath }}/docker-compose.yaml --progress quiet down'
+    readyTimeout: '20000'
+- task: CopyFilesOverSSH@0
+  displayName: Copy Project to Server
+  inputs:
+    sshEndpoint: '85.215.60.151_ssh'
+    contents: '**'
+    cleanTargetFolder: true
+    cleanHiddenFilesInTarget: true
+    overwrite: true
+    targetFolder: $(remoteProjectPath)
+    isWindowsOnTarget: false
+    readyTimeout: '20000'
+- task: SSH@0
+  displayName: docker compose up
+  inputs:
+    sshEndpoint: '85.215.60.151_ssh'
+    runOptions: 'commands'
+    commands: 'docker compose -f ${{ variables.remoteProjectPath }}/docker-compose.yaml --progress quiet pull && docker compose -f ${{ variables.remoteProjectPath }}/docker-compose.yaml --progress quiet up -d --force-recreate'
+    readyTimeout: '20000'
