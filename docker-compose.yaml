@@ -6,3 +6,9 @@ services:
     image: ghcr.io/laendleenergy/redis:latest
     ports:
       - 6379:6379
+    networks:
+      - redis
+
+networks:
+  redis:
+    name: redis
